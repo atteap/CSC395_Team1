@@ -9,7 +9,7 @@ def get_recipe():
     company = data.get("company")
     ingredients = data.get("ingredients")
     
-    ollama_api_url = "REPLACE WITH ACTUAL URL"
+    ollama_api_url = "http://ollama-app:8000"
     payload = {
         "company": company,
         "ingredients": ingredients
