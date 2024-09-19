@@ -1,0 +1,15 @@
+version: '3'
+services:
+  flask-app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - OLLAMA_API_URL=http://ollama-app:8000
+    depends_on:
+      - ollama-app
+
+  ollama-app:
+    image: ollama/ollama:latest
+    ports:
+      - "8000:8000"
