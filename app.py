@@ -32,3 +32,10 @@ def submit_data():
 if __name__ == '__main__':
     app.run(debug=True)
 
+
+
+# Explanation of the Changes:
+
+#    /submit route: This route accepts POST requests and expects the request body to contain JSON data with company and ingredients. It returns a JSON response with the data it received.
+#    request.get_json(): This is used to parse the incoming JSON data.
+#    Placeholder response: It responds with a message confirming that the data was received.
