@@ -1,41 +1,28 @@
 from flask import Flask, request, jsonify
+import requests
 
 app = Flask(__name__)
 
-# Home route
-@app.route('/')
-def home():
-    return 'Test, Team 1 Project for CSC395'
-
-# POST route to accept company and ingredients data
-@app.route('/submit', methods=['POST'])
-def submit_data():
-    # Get the JSON data from the request body
+@app.route('/get-recipe', methods=['POST'])
+def get_recipe():
     data = request.get_json()
-
-    # Extract 'company' and 'ingredients' from the data
-    company = data.get('company')
-    ingredients = data.get('ingredients')
-
-    # Placeholder response
-    response = {
-        'message': 'Data received successfully!',
-        'received': {
-            'company': company,
-            'ingredients': ingredients
-        }
+    company = data.get("company")
+    ingredients = data.get("ingredients")
+    
+    ollama_api_url = "REPLACE WITH ACTUAL URL"
+    payload = {
+        "company": company,
+        "ingredients": ingredients
     }
+    
+    try:
+        response = requests.post(ollama_api_url, json=payload)
+        response.raise_for_status()
 
-    # Return the response as JSON
-    return jsonify(response)
+        return jsonify(response.json())
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": "Failed to connect to Ollama API", "details": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-
-
-# Explanation of the Changes:
-
-#    /submit route: This route accepts POST requests and expects the request body to contain JSON data with company and ingredients. It returns a JSON response with the data it received.
-#    request.get_json(): This is used to parse the incoming JSON data.
-#    Placeholder response: It responds with a message confirming that the data was received.
+    app.run(host='0.0.0.0', port=5000)
