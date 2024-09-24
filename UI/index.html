@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamProject</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-bar">
+            <a href="index.html" class="main">Team 1</a>
+        </div>
+    </nav>
+
+    <div class="center">
+        <select id="dropdown">
+            <option value="none" selected>Select a company</option>
+            <option value="option1">Company1</option>
+            <option value="option2">Company2</option>
+        </select>
+    </div>
+    
+    <div id="text-box">
+        <p>You selected: <span id="selected-option"></span></p>
+        <textarea id="text-input" rows="4" cols="50" placeholder="List your ingrediants here..."></textarea>
+        <br>
+        <button id="submit-btn">SUBMIT</button>
+    </div>
+
+    <div id="message-box"></div>
+
+    <div>
+        <img src="dino.png" alt="Overlay Image" class="overlay-image">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
