@@ -42,8 +42,8 @@ def call_llama_api(company, ingredients):
     except requests.exceptions.RequestException as e:
         return f"Error with LLaMA: {str(e)}"
 
-@app.route('/get-recipe', methods=['POST'])
-def get_recipe():
+@app.route('/submit', methods=['POST'])
+def submit():
     data = request.get_json()
     company = data.get("company")
     ingredients = data.get("ingredients")
