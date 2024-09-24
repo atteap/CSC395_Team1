@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 def call_ollama_api(company, ingredients):
     try:
-        ollama_api_url = "http://ollama-app:8000/get-recipe"
+        ollama_api_url = "http://ollama-app:8000/submit"
         payload = {
             "company": company,
             "ingredients": ingredients
@@ -18,7 +18,7 @@ def call_ollama_api(company, ingredients):
 
 def call_mistral_api(company, ingredients):
     try:
-        mistral_api_url = "http://mistral-app:8000/get-recipe"
+        mistral_api_url = "http://mistral-app:8000/submit"
         payload = {
             "company": company,
             "ingredients": ingredients
@@ -31,7 +31,7 @@ def call_mistral_api(company, ingredients):
 
 def call_llama_api(company, ingredients):
     try:
-        llama_api_url = "http://llama-app:8000/get-recipe"
+        llama_api_url = "http://llama-app:8000/submit"
         payload = {
             "company": company,
             "ingredients": ingredients
