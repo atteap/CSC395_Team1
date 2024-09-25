@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10
 
 WORKDIR /app
 
@@ -9,6 +9,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 EXPOSE 8000
 
-ENV OLLAMA_API_URL="http://localhost:8000"
+ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "app.py"]
+CMD ["python3", "app.py"]
