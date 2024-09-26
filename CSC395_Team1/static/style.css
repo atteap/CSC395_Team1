@@ -108,6 +108,7 @@ button:active {
     left: -15%;
     max-width: 100%; /* Ensures the image scales properly */
     height: auto;
+    pointer-events: none; /* Makes the image click-through */
 }
 
 @media (max-width: 600px) {
