@@ -1,0 +1,25 @@
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=orca-mini:3b-q4_1
+    depends_on:
+      - ollama
+    networks:
+      - app-network
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
