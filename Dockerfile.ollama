@@ -1,0 +1,10 @@
+# Use the official Ollama image as the base
+FROM ollama/ollama
+
+# Install curl and any other required packages
+RUN apt-get update && \
+    apt-get install -y curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Optionally, add any additional setup or configuration commands here

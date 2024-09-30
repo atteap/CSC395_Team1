@@ -1,0 +1,45 @@
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=llama3  # Updated to use Llama 3 model
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  ollama:
+    build:
+      context: .
+      dockerfile: Dockerfile.ollama  # Use the custom Dockerfile for Ollama
+    environment:
+      OLLAMA_MAX_LOADED_MODELS: "0"  # Adjust as needed
+      OLLAMA_LOAD_TIMEOUT: "5m0s"      # Adjust as needed
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./models:/root/.ollama/models
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 6G  # Adjust this value based on your available memory
+
+volumes:
+  ollama_data:
+
+networks:
+  app-network:
+    driver: bridge
