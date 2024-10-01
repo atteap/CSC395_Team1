@@ -35,7 +35,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 6G  # Adjust this value based on your available memory
+          memory: 8G  # Adjust this value based on your available memory
 
 volumes:
   ollama_data:

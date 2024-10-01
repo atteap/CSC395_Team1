@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Command to run your Flask app
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "--timeout", "120", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "--timeout", "0", "app:app"]
