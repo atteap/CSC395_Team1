@@ -1,0 +1,10 @@
+// const data = await response.json();
+
+            // loadingIndicator.style.display = 'none';
+
+            // if (data.error) {
+                // messageBox.textContent = `Error: ${data.error}`;
+            // } else {
+                // Assuming the recipe data is in the 'response' field of the JSON
+                // messageBox.innerHTML = `<pre>${data.response}</pre>`;
+            // }
