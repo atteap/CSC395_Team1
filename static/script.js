@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
     const dropdown = document.getElementById('dropdown');
     const textInput = document.getElementById('text-input');
     const submitButton = document.getElementById('submit-btn');
@@ -6,19 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageBox = document.getElementById('message-box');
     const loadingIndicator = document.getElementById('loading');
 
-    // Initialize dropdown selection text
+    form.addEventListener('submit', event => event.preventDefault());
     selectedOptionText.textContent = 'Select a company';
 
-    // Dropdown selection handler
-    dropdown.addEventListener('change', function () {
-        selectedOptionText.textContent = this.options[this.selectedIndex].text;
+    dropdown.addEventListener('change', () => {
+        selectedOptionText.textContent = dropdown.options[dropdown.selectedIndex].text;
         validateForm();
     });
 
-    // Submit button click handler
-    submitButton.addEventListener('click', async function () {
+    submitButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
         const textInputValue = textInput.value.trim();
-        const selectedCompany = selectedOptionText.textContent;
+        const selectedCompany = dropdown.value;
 
         if (!validateForm()) {
             alert("Please select a company and enter some ingredients.");
@@ -29,38 +30,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             loadingIndicator.style.display = 'block';
+            submitButton.disabled = true;
             messageBox.style.display = 'none';
-            messageBox.textContent = ''; // Clear previous messages
+            messageBox.textContent = '';
 
             const response = await fetch('/submit', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataToSend)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToSend),
             });
 
             if (!response.ok) {
                 throw new Error('Failed to fetch response from the server');
             }
 
-            // Process the streaming response
-            const reader = response.body.getReader();
-            let chunks = '';
-            let done = false;
-
-            while (!done) {
-                const { value, done: readerDone } = await reader.read();
-                if (value) {
-                    chunks += new TextDecoder().decode(value); // Decode each chunk and append
-                }
-                done = readerDone;
-            }
+            const data = await response.json(); // Directly parse the JSON response
 
             loadingIndicator.style.display = 'none';
-
-            // Parse the JSON response from the streamed chunks
-            const data = JSON.parse(chunks);
+            submitButton.disabled = false;
 
             if (data.error) {
                 messageBox.textContent = `Error: ${data.error}`;
@@ -73,41 +60,39 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${data.ingredients.map(item => `<li>${item}</li>`).join('')}
                     </ul>
                     <h3>Instructions:</h3>
-                    <p>${data.instructions}</p>
+                    <ol>
+                        ${data.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                    </ol>
                 `;
                 messageBox.innerHTML = recipeHTML;
             }
 
-            messageBox.style.display = 'block';
-
-            // Reset form after submission
+            messageBox.style.display = 'block'; 
             resetForm();
 
         } catch (error) {
             console.error('Error:', error);
             loadingIndicator.style.display = 'none';
+            submitButton.disabled = false; 
             messageBox.textContent = 'There was an error sending your data to the server.';
             messageBox.style.display = 'block';
         }
     });
 
-    // Input change handler
     textInput.addEventListener('input', validateForm);
 
-    // Form validation function
     function validateForm() {
         const textInputValue = textInput.value.trim();
-        const selectedOption = selectedOptionText.textContent;
-
-        submitButton.disabled = textInputValue === "" || selectedOption === "Select a company";
-        return !submitButton.disabled; // Return true if the button is enabled
+        const selectedCompany = dropdown.value;
+        const isFormValid = textInputValue !== "" && selectedCompany !== "" && selectedCompany !== "none";
+        submitButton.disabled = !isFormValid;
+        return isFormValid;
     }
 
-    // Function to reset the form fields
     function resetForm() {
         textInput.value = '';
-        dropdown.selectedIndex = 0; // Resets the dropdown to the first option
+        dropdown.selectedIndex = 0;
         selectedOptionText.textContent = 'Select a company';
-        validateForm(); // Re-evaluate button state
+        validateForm();
     }
 });

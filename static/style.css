@@ -107,7 +107,7 @@ button:active {
 
 /* Message Box Styles */
 #message-box {
-    text-align: center;
+    text-align: left;
     width: 90%;
     max-width: 600px;
     margin: 0 auto;
@@ -115,9 +115,44 @@ button:active {
     color: var(--text-color);
     background-color: white;
     font-size: 16px;
-    padding: 10px;
+    padding: 20px;
     border: 1px solid var(--border-color);
+    border-radius: 8px;
     display: none; /* Initially hidden */
+}
+
+/* Recipe Display Styles */
+#message-box h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+#message-box h4 {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    font-style: italic;
+}
+
+#message-box h3 {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+/* Remove default bullet points in the ingredients list */
+#message-box ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#message-box ul li::before {
+    content: "• "; /* Custom bullet symbol */
+    color: var(--text-color); /* Adjust the color as needed */
+}
+
+#message-box p {
+    line-height: 1.6;
 }
 
 /* Overlay Image Styles */
