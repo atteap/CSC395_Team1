@@ -9,17 +9,14 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Constants
-COMPANY_INGREDIENTS = {
-    "Nabisco": "Nabisco Wheat Thins",
-    "Kraft": "Kraft Mayo",
-    "Nestle": "Nestle Chocolate Chips"
-}
 OLLAMA_API_URL = 'http://ollama:11434/api/generate'
+
+# Define a list of valid companies
+VALID_COMPANIES = ["Nabisco", "Kraft", "Nestle"]
 
 @app.route('/')
 def index():
-    return render_template('index.html', companies=COMPANY_INGREDIENTS.keys())
+    return render_template('index.html', companies=VALID_COMPANIES)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -30,11 +27,10 @@ def submit():
 
     company = data.get('company')
     ingredients = data.get('ingredients')
-    options = data.get('options', {})
 
-    # Ensure company name matches exactly
-    if company not in COMPANY_INGREDIENTS:
-        logger.error(f"Invalid company submitted: {company}")  # Logging the invalid company
+    # Ensure company name is valid
+    if company not in VALID_COMPANIES:
+        logger.error(f"Invalid company submitted: {company}")
         return jsonify({"error": "Invalid company. Please select a valid company."}), 400
 
     # Validate and format ingredients
@@ -45,8 +41,7 @@ def submit():
 
     logger.info(f"Received request: Company - {company}, Ingredients - {ingredients}")
 
-    company_ingredient = COMPANY_INGREDIENTS[company]
-    prompt_text = create_prompt_text(company, ingredients, company_ingredient, options)
+    prompt_text = create_prompt_text(company, ingredients)
 
     logger.info(f"Sending payload to Ollama: {prompt_text}")
 
@@ -72,14 +67,16 @@ def format_ingredients(ingredients):
 
 def is_valid_input(company, ingredients):
     """Check if the provided company and ingredients are valid."""
-    return company and company in COMPANY_INGREDIENTS and ingredients
+    return company in VALID_COMPANIES and bool(ingredients)
 
-def create_prompt_text(company, ingredients, company_ingredient, options):
+# Updated prompt generation to let Ollama choose the company ingredient
+def create_prompt_text(company, ingredients):
     """Generate the prompt text for the recipe generation."""
-    all_ingredients = ingredients + [company_ingredient]
+    all_ingredients = ', '.join(ingredients)
     return (
-        f"Create a recipe using the following ingredients for {company}: {', '.join(all_ingredients)}. "
-        f"Make sure to include {company_ingredient} as a key ingredient. Format the recipe as follows:\n\n"
+        f"Create a recipe using the following ingredients for {company}: {all_ingredients}. "
+        f"Choose a signature ingredient from {company}'s product line and include it in the recipe. "
+        "Format the recipe as follows:\n\n"
         "[**Recipe Name**]\n"
         "Tagline: [A short and catchy tagline]\n"
         "Ingredients:\n"
