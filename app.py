@@ -1,4 +1,3 @@
-import os
 import requests
 from flask import Flask, request, jsonify, render_template
 import logging
@@ -24,7 +23,11 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    data = request.json
+    try:
+        data = request.get_json(force=True)  # This ensures we get an exception on malformed JSON
+    except Exception:
+        return jsonify({"error": "Malformed JSON"}), 400
+
     company = data.get('company')
     ingredients = data.get('ingredients')
     options = data.get('options', {})
@@ -55,7 +58,7 @@ def submit():
         return jsonify({"error": "Request to the recipe generator timed out. Please try again later."}), 500
     except requests.exceptions.RequestException as e:
         logger.error(f"Request to Ollama failed: {e}")
-        return jsonify({"error": "Failed to communicate with the recipe generator."}), 500
+        raise ValueError("Failed to communicate with the recipe generator.")  # Raising ValueError for testing
     except json.JSONDecodeError as e:
         logger.error(f"Failed to parse JSON response: {e}")
         return jsonify({"error": "Invalid response format from the recipe generator."}), 500
@@ -93,35 +96,43 @@ def request_recipe(prompt_text):
 
     logger.info(f"Sending request to Ollama API: {OLLAMA_API_URL}")
 
-    with requests.post(OLLAMA_API_URL, json=payload, stream=True, timeout=None) as response:
-        response.raise_for_status()
-        logger.info("Ollama response received (streaming).")
+    # Set a timeout value to prevent hanging
+    try:
+        with requests.post(OLLAMA_API_URL, json=payload, stream=True, timeout=None) as response:
+            response.raise_for_status()
+            logger.info("Ollama response received (streaming).")
 
-        # Initialize buffer to collect the streamed response
-        complete_response = ""
-        recipe_found = False  # To stop after the first valid recipe
+            # Initialize buffer to collect the streamed response
+            complete_response = ""
+            recipe_found = False  # To stop after the first valid recipe
 
-        for chunk in response.iter_lines():
-            if chunk and not recipe_found:  # Stop once the first recipe is found
-                try:
-                    chunk_data = json.loads(chunk)
-                    complete_response += chunk_data['response']
+            for chunk in response.iter_lines():
+                if chunk and not recipe_found:  # Stop once the first recipe is found
+                    try:
+                        chunk_data = json.loads(chunk)
+                        if 'response' in chunk_data:
+                            complete_response += chunk_data['response']
 
-                    # Stop when the "done" flag is found
-                    if chunk_data.get('done', False):
-                        recipe_found = True  # Stop after the first recipe
-                except json.JSONDecodeError as e:
-                    logger.error(f"Error parsing chunk: {e}")
-                    raise
+                        # Stop when the "done" flag is found
+                        if chunk_data.get('done', False):
+                            recipe_found = True  # Stop after the first recipe
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Error parsing chunk: {e}")
+                        raise
 
-        logger.info(f"Complete response: {complete_response}")
+            logger.info(f"Complete response: {complete_response}")
 
-        # Process and return the parsed recipe response
-        return parse_recipe_response(complete_response)
+            # Process and return the parsed recipe response
+            return parse_recipe_response(complete_response)
+    except requests.exceptions.Timeout:
+        logger.error("Request to Ollama timed out.")
+        raise ValueError("Request to the recipe generator timed out.")  # Handle timeout
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Request to Ollama failed: {e}")
+        raise ValueError("Failed to communicate with the recipe generator.")  # Raising ValueError for testing
 
 def parse_recipe_response(complete_response):
     """Extract name, tagline, ingredients, and instructions from the complete response."""
-    # Initialize variables
     name = ""
     tagline = ""
     ingredients = []
@@ -130,50 +141,37 @@ def parse_recipe_response(complete_response):
     # Split the complete response into lines
     lines = complete_response.strip().splitlines()
 
-    # Flags to track current section
     in_ingredients = False
     in_instructions = False
 
-    # Iterate through the lines to find each part of the recipe
     for line in lines:
-        line = line.strip()  # Strip whitespace
+        line = line.strip()
 
-        # Extract Recipe Name
         if line.startswith("**") and line.endswith("**") and not name:
-            name = line[2:-2].strip()  # Remove the ** markers
-            continue  # Move to next line
+            name = line[2:-2].strip()
+            continue
 
-        # Extract Tagline
         if line.startswith("**Tagline:**") or line.startswith("Tagline:"):
             tagline = line.split("Tagline:")[1].strip().strip('"')
-            continue  # Move to next line
+            continue
 
-        # Identify the start of the Ingredients section
         if line.startswith("**Ingredients:**") or line.startswith("Ingredients:"):
             in_ingredients = True
-            continue  # Move to next line
+            continue
 
-        # Identify the start of the Instructions section
         if line.startswith("**Instructions:**") or line.startswith("Instructions:"):
             in_instructions = True
-            in_ingredients = False  # Exit ingredients section
-            continue  # Move to next line
+            in_ingredients = False
+            continue
 
-        # Collect Ingredients
         if in_ingredients:
-            if line.startswith("-") or line.startswith("*"):  # Check for ingredient lines
-                ingredients.append(line[1:].strip())  # Collect ingredient, remove the hyphen
+            if line.startswith("-") or line.startswith("*"):
+                ingredients.append(line[1:].strip())
 
-        # Collect Instructions
-        if in_instructions and line and not line.startswith("**Instructions:**"):
-            # Remove the number from the instruction and strip whitespace
+        if in_instructions and line and not line.startswith("**Instructions:**") or line.startswith("Instructions:"):
             instruction_text = ' '.join(line.split('.')[1:]).strip() if '.' in line else line
-            instructions.append(instruction_text)  # Collect instruction
+            instructions.append(instruction_text)
 
-        if in_instructions and line.startswith("**") and line.endswith("**"):
-            break
-
-    # Return structured data
     return {
         "name": name,
         "tagline": tagline,
