@@ -2,7 +2,7 @@ import json
 import unittest
 from unittest.mock import patch
 import requests
-from app import app, request_recipe
+from src.app import app, request_recipe  # Adjusted import to point to src folder
 
 class MockResponse:
     def __init__(self, status_code, json_data, stream=False):
@@ -49,7 +49,7 @@ class FlaskAppTest(unittest.TestCase):
             "company": "Nabisco",
             "ingredients": "Salt, Sugar"
         }
-        with patch('app.request_recipe', return_value={"name": "Test Recipe", "tagline": "Test tagline", "ingredients": ["Salt", "Sugar"], "instructions": ["Mix ingredients", "Serve"]}):
+        with patch('src.app.request_recipe', return_value={"name": "Test Recipe", "tagline": "Test tagline", "ingredients": ["Salt", "Sugar"], "instructions": ["Mix ingredients", "Serve"]}):  # Adjusted path
             response = self.app.post('/submit', json=valid_data)
             self.assertEqual(response.status_code, 200)
             data = response.get_json()

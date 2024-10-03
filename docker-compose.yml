@@ -16,7 +16,7 @@ services:
 
   ollama:
     build:
-      context: .
+      context: ./src
       dockerfile: Dockerfile.ollama  # Use the custom Dockerfile for Ollama
     environment:
       OLLAMA_MAX_LOADED_MODELS: "0"  # Adjust as needed

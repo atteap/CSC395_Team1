@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900&display=swap');
+
+/* Global Styles */
+:root {
+    --primary-color: #bff0ff;
+    --text-color: #262626;
+    --border-color: #262626;
+    --button-bg: #f7f7f7;
+    --button-bg-hover: #262626;
+    --button-bg-active: #1f1f1f;
+    --disabled-bg: #cccccc;
+    --disabled-border: #999999;
+}
+
+body {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 0;
+    margin: 0;
+    font-family: "Merriweather", serif;
+}
+
+/* Navigation Styles */
+nav {
+    height: 80px;
+    background: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Title */
+.main {
+    font-size: 24px;
+    font-weight: 700;
+    padding: 8px;
+    border: 2px solid transparent;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+/* Centering Utility */
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    margin-top: 20px;
+}
+
+/* Form Elements */
+select, 
+textarea, 
+button {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+select {
+    margin-top: 20px;
+}
+
+#text-box {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+textarea {
+    margin-bottom: 10px;
+    width: 90%;
+    max-width: 600px;
+}
+
+button {
+    background-color: var(--button-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+button:disabled {
+    background-color: var(--disabled-bg);
+    cursor: not-allowed;
+    border: 2px solid var(--disabled-border);
+}
+
+button:hover:enabled {
+    background-color: var(--button-bg-hover);
+    border: 2px solid white;
+    color: white;
+}
+
+button:active {
+    background-color: var(--button-bg-active);
+    transform: scale(0.98);
+}
+
+/* Message Box Styles */
+#message-box {
+    text-align: left;
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 20px;
+    color: var(--text-color);
+    background-color: white;
+    font-size: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: none; /* Initially hidden */
+}
+
+/* Recipe Display Styles */
+#message-box h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+#message-box h4 {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    font-style: italic;
+}
+
+#message-box h3 {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+/* Remove default bullet points in the ingredients list */
+#message-box ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#message-box ul li::before {
+    content: "• "; /* Custom bullet symbol */
+    color: var(--text-color); /* Adjust the color as needed */
+}
+
+#message-box p {
+    line-height: 1.6;
+}
+
+/* Overlay Image Styles */
+.overlay-image {
+    position: absolute;
+    opacity: 0.2;
+    top: 44%; /* Adjust positioning */
+    left: -15%;
+    max-width: 100%; /* Ensures the image scales properly */
+    height: auto;
+    pointer-events: none; /* Makes the image click-through */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .main {
+        font-size: 20px;
+    }
+
+    textarea {
+        width: 95%; /* Adjust width on smaller screens */
+    }
+
+    button {
+        width: 100%; /* Full-width buttons on smaller screens */
+        padding: 10px; /* Increase padding for better touch targets */
+    }
+}
+
+/* Focus Styles */
+select:focus,
+textarea:focus,
+button:focus {
+    outline: 3px solid #007bff; /* Highlight on focus */
+}
+
+/* Loading Indicator Styles */
+#loading-wrapper {
+    position: fixed; /* Fixed position to cover the viewport */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    right: 0; /* Stretch to the right */
+    bottom: 0; /* Stretch to the bottom */
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other content */
+}
+
+#loading {
+    font-size: 24px; /* Adjust font size */
+    color: var(--text-color); /* Use the defined text color */
+    text-align: center; /* Center text */
+}

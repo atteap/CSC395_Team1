@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="nav-bar">
+            <a href="{{ url_for('index') }}" class="main">Team 1</a>
+        </div>
+    </nav>
+
+    <form id="recipe-form">
+        <div class="center">
+            <select id="dropdown" aria-label="Select a company">
+                <option value="none" selected>Select a company</option>
+                {% for company in companies %}
+                    <option value="{{ company }}">{{ company }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div id="text-box">
+            <p>You selected: <span id="selected-option">Select a company</span></p>
+            <textarea id="text-input" rows="4" cols="50" placeholder="List your ingredients here..."></textarea>
+            <br>
+            <button id="submit-btn" disabled>SUBMIT</button>
+        </div>
+    </form>
+
+    <div id="loading" style="display:none;">Loading...</div>
+
+    <div id="message-box" style="display:none;"></div> <!-- Ensure message box is hidden initially -->
+
+    <div>
+        <img src="{{ url_for('static', filename='dino.png') }}" alt="Dinosaur Image" role="presentation" class="overlay-image">
+    </div>
+
+    <!-- Include external script file -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
