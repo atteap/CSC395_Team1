@@ -1,5 +1,7 @@
 # CSC395_Team1 README
 
+# File Summary:
+
 **script.js:**
 
 Provides the dynamic functionality of the web application. It handles user interactions, validates input, manages the submission of data to the server, and processes the server's response to display the generated recipe or any error messages. This enhances the user experience by providing real-time feedback and ensuring a smooth workflow for recipe generation.
