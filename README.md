@@ -1,5 +1,10 @@
 # CSC395_Team1 README
 
+# System Diagram:
+
+![Diagram_Proj1](https://github.com/user-attachments/assets/d7b64ef7-54df-451b-a9ba-0b9be8006d68)
+
+
 # File Summary:
 
 **script.js:**
