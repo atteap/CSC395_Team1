@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 OLLAMA_API_URL = 'http://ollama:11434/api/generate'
 
 # Define a list of valid companies
-VALID_COMPANIES = ["Nabisco", "Kraft", "Nestle"]
+VALID_COMPANIES = ["Nabisco", "Kraft", "Nestle", "Kellogg", "Coca-Cola", "General Mills"]
 
 @app.route('/')
 def index():
