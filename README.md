@@ -210,6 +210,11 @@ This command will:
 - Use the same commands as before to build and run your Docker containers.
 
       docker-compose up --build
+  
+- Pulling llama3 into a directory the user needs to make called models
+
+        cd ./models
+        ollama pull llama3
 
 ## Summary:
 
