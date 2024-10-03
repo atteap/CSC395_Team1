@@ -86,6 +86,7 @@ def create_prompt_text(company, ingredients, company_ingredient, options):
         "- [list each ingredient with quantity]\n"
         "Instructions:\n"
         "1. [Step-by-step cooking instructions]\n"
+        "End generation\n"
     )
 
 def request_recipe(prompt_text):
@@ -169,12 +170,6 @@ def parse_recipe_response(complete_response):
         if in_instructions and line and not line.startswith("**Instructions:**") or line.startswith("Instructions:"):
             instruction_text = ' '.join(line.split('.')[1:]).strip() if '.' in line else line
             instructions.append(instruction_text)
-
-        if line.startswith("**") and line.endswith("**"):
-            continue
-
-        if line.startswith("") and line.endswith(""):
-            continue
 
     return {
         "name": name,
