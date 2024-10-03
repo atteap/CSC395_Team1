@@ -8,7 +8,7 @@
 ## File Summary:
 
 **script.js:**
-
+docker exec -it <ollama container id> \bin\sh
 Provides the dynamic functionality of the web application. It handles user interactions, validates input, manages the submission of data to the server, and processes the server's response to display the generated recipe or any error messages. This enhances the user experience by providing real-time feedback and ensuring a smooth workflow for recipe generation.
 
 **index.html:**
@@ -215,6 +215,13 @@ This command will:
 
         cd ./models
         ollama pull llama3
+
+- This is how you run the tests file
+  
+      docker exec -it <ollama container id> \bin\sh
+      python3 -m unittest discover -s tests
+
+
 
 ## Summary:
 
