@@ -34,6 +34,7 @@ def submit():
 
     # Ensure company name matches exactly
     if company not in COMPANY_INGREDIENTS:
+        logger.error(f"Invalid company submitted: {company}")  # Logging the invalid company
         return jsonify({"error": "Invalid company. Please select a valid company."}), 400
 
     # Validate and format ingredients
@@ -58,7 +59,7 @@ def submit():
         return jsonify({"error": "Request to the recipe generator timed out. Please try again later."}), 500
     except requests.exceptions.RequestException as e:
         logger.error(f"Request to Ollama failed: {e}")
-        raise ValueError("Failed to communicate with the recipe generator.")  # Raising ValueError for testing
+        return jsonify({"error": "Failed to communicate with the recipe generator."}), 500
     except json.JSONDecodeError as e:
         logger.error(f"Failed to parse JSON response: {e}")
         return jsonify({"error": "Invalid response format from the recipe generator."}), 500
@@ -96,40 +97,37 @@ def request_recipe(prompt_text):
 
     logger.info(f"Sending request to Ollama API: {OLLAMA_API_URL}")
 
-    # Set a timeout value to prevent hanging
     try:
         with requests.post(OLLAMA_API_URL, json=payload, stream=True, timeout=None) as response:
             response.raise_for_status()
             logger.info("Ollama response received (streaming).")
 
-            # Initialize buffer to collect the streamed response
             complete_response = ""
-            recipe_found = False  # To stop after the first valid recipe
+            recipe_found = False
 
             for chunk in response.iter_lines():
-                if chunk and not recipe_found:  # Stop once the first recipe is found
+                if chunk and not recipe_found:
                     try:
                         chunk_data = json.loads(chunk)
                         if 'response' in chunk_data:
                             complete_response += chunk_data['response']
 
-                        # Stop when the "done" flag is found
                         if chunk_data.get('done', False):
-                            recipe_found = True  # Stop after the first recipe
+                            recipe_found = True
                     except json.JSONDecodeError as e:
                         logger.error(f"Error parsing chunk: {e}")
-                        raise
+                        raise ValueError("Invalid JSON structure received from the API")  # Updated
 
             logger.info(f"Complete response: {complete_response}")
 
-            # Process and return the parsed recipe response
             return parse_recipe_response(complete_response)
+
     except requests.exceptions.Timeout:
         logger.error("Request to Ollama timed out.")
-        raise ValueError("Request to the recipe generator timed out.")  # Handle timeout
+        raise ValueError("Request to the recipe generator timed out.")
     except requests.exceptions.RequestException as e:
         logger.error(f"Request to Ollama failed: {e}")
-        raise ValueError("Failed to communicate with the recipe generator.")  # Raising ValueError for testing
+        raise ValueError("Failed to communicate with the recipe generator.")
 
 def parse_recipe_response(complete_response):
     """Extract name, tagline, ingredients, and instructions from the complete response."""
