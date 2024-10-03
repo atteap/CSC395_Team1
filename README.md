@@ -11,7 +11,7 @@
 
 Provides the dynamic functionality of the web application. It handles user interactions, validates input, manages the submission of data to the server, and processes the server's response to display the generated recipe or any error messages. This enhances the user experience by providing real-time feedback and ensuring a smooth workflow for recipe generation.
 
-**Index.html:**
+**index.html:**
 
 UI for interacting with the recipe generation functionality of the Flask app. It allows users to select a company, input ingredients, and submit their request for a recipe, while also handling user feedback and loading states.
 
@@ -27,7 +27,7 @@ Creates a container based on the official Ollama image for running machine learn
 
 Creates a Flask web application that allows users to generate recipes based on selected company products and provided ingredients. It validates user input, constructs a prompt for recipe generation, and interacts with the Ollama API to retrieve and display the generated recipes. The app also includes error handling and logging for better operational visibility.
 
-**Docker-compose.yml:**
+**docker-compose.yml:**
 
 This docker-compose file sets up a web application using Flask that interacts with a machine learning model service (ollama). It configures the two services to run in Docker containers, ensuring the web app can communicate with the model and only starts after the model service is healthy. The model service manages resources and loads models (like Llama3) with defined memory limits and timeouts. This setup is designed for deploying a web app that leverages machine learning models in a containerized environment.
 
